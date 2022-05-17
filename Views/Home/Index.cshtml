@@ -1,0 +1,103 @@
+﻿@{
+    ViewData["Title"] = "Rösta i Umeå kommun för val 2022";
+}
+
+<div id="map"></div>
+
+<img class="Umea" alt="Umeå Kommun" src="~/img/Umea_kommun_SVV.png" style="height:35px;" />
+<div class="mapButton" id="ZoomPlus">
+    <img title="Zooma in"
+         src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAAAAADFHGIkAAAAAnRSTlMA/1uRIrUAAAAjSURBVHgBY/iPA9BZ4o27+5vBIgERYkACQGlcEoPXHwMatQB6vg/DnGukgQAAAABJRU5ErkJggg=="
+         alt="Zooma in" />
+</div>
+<div class="mapButton" id="ZoomMinus">
+    <img title="Zooma ut"
+         src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAAAAADFHGIkAAAAAnRSTlMA/1uRIrUAAAAbSURBVHgBY/iPA4xwiTfuDEjA/Q0BCTQwGogAyWgiy5/WMw8AAAAASUVORK5CYII="
+         alt="Zooma ut" />
+</div>
+
+<div id="Hitta">
+    <button id="HittaButton">Hitta din vallokal</button>
+</div>
+
+<div id="InfroScreen" class="open">
+    <div class="body">
+        <h2>Jag vill rösta på valdagen</h2>
+        <p>Du kan se vilken vallokal du kan rösta i på valdagen genom att söka på din folkbokföringsadress</p>
+        <div class="search">
+            <div class="search-box">
+                <img src="img/magnify.png" alt="">
+                <input type="search" name="FindSearch2" id="FindSearch2" placeholder="Din adress" autocomplete="off" >
+            </div>
+            <div id="SearchResults2" class="SearchResult"></div>
+        </div>
+        <h2>Jag vill förtidsrösta</h2>
+        <br>
+
+
+        <button class="CloseInfroScreen">Visa förtidsröstlokaler i Umeå kommun</button>
+        <br><br>
+        <div class="buttons">
+            <a class="btn" href="https://www.val.se/" target="_blank">Valmyndigheten</a>
+            <a class="btn" href="https://www.val.se/servicelankar/other-languages.html" target="_blank">
+                Information in
+                other languages
+            </a>
+            <a class="btn" href="https://www.umea.se/" target="_blank">Umeå kommun valinformation</a>
+
+        </div>
+    </div>
+</div>
+
+<div id="Markerinfo" class="show">
+    <h1>Hagaskolan</h1>
+    <h3>Utmarksvägen 1</h3>
+    <h4>När du ska rösta: </h4>
+    <p>
+        Ta med id-handling och ditt röstkort. <br>
+        På röstkortet finns mer information.
+    </p>
+
+    <a href="http://www.umea.se/val" target="_blank">www.umea.se/val2022</a>
+
+
+    <h4>Öppettider</h4>
+
+    <table>
+        <tr>
+            <th>Idag Tisdag</td>
+            <th>10 - 14</td>
+        </tr>
+        <tr>
+            <td>Onsdag 23 juni</td>
+            <td>10 - 14</td>
+        </tr>
+        <tr>
+            <td>Tordag 24 juni</td>
+            <td>13 - 15</td>
+        </tr>
+        <tr>
+            <td>Fredag 25 juni</td>
+            <td>Stängt</td>
+        </tr>
+    </table>
+
+</div>
+
+<div id="Find">
+    <div class="body">
+        <h1>Hitta din vallokal</h1>
+
+        <div class="search">
+            <div class="search-box">
+                <img src="img/magnify.png" alt="">
+                <input type="search" name="FindSearch" id="FindSearch" placeholder="Din adress" autocomplete="off">
+            </div>
+            <div id="SearchResults" class="SearchResult"></div>
+        </div>
+        <br />
+        <div style="text-align:right;">
+            <button id="CloseFind">Stäng</button>
+        </div>
+    </div>
+</div>

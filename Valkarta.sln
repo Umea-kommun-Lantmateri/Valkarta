@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31903.59
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Valkarta", "Valkarta.csproj", "{2C5AC5E9-1DD6-4FD7-B4FD-F86D0D2B90FC}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{2C5AC5E9-1DD6-4FD7-B4FD-F86D0D2B90FC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2C5AC5E9-1DD6-4FD7-B4FD-F86D0D2B90FC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2C5AC5E9-1DD6-4FD7-B4FD-F86D0D2B90FC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2C5AC5E9-1DD6-4FD7-B4FD-F86D0D2B90FC}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {6660900E-355D-4204-A339-FAAA190EFFA0}
+	EndGlobalSection
+EndGlobal

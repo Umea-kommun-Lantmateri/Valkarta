@@ -1,0 +1,32 @@
+[
+  {
+    "outputFileName": "wwwroot/js/ol.min.js",
+    "inputFiles": [
+      "wwwroot/js/ol.js"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/js/site.min.js",
+    "inputFiles": [
+      "wwwroot/js/site.js"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/js/map.min.js",
+    "inputFiles": [
+      "wwwroot/js/map.js"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/js/network.min.js",
+    "inputFiles": [
+      "wwwroot/js/network.js"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/js/proj4-src.min.js",
+    "inputFiles": [
+      "wwwroot/js/proj4-src.js"
+    ]
+  }
+]

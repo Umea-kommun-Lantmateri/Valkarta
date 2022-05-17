@@ -1,0 +1,24 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - Valkarta</title>
+    <link rel="stylesheet" href="~/css/site.min.css" />
+</head>
+
+<body>
+
+    @RenderBody()
+
+
+    <script src="~/js/proj4-src.min.js" asp-append-version="true"></script>
+    <script src="~/js/ol.min.js" asp-append-version="true"></script>
+    <script src="~/js/map.min.js" asp-append-version="true"></script>
+    <script src="~/js/network.min.js" asp-append-version="true"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+
+</html>

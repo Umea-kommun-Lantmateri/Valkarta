@@ -1,0 +1,15 @@
+{
+  "compileOnSave": true,
+  "compilerOptions": {
+    "noImplicitAny": false,
+    "noEmitOnError": true,
+    "sourceMap": true,
+    "target": "ES3",
+    "removeComments": true,
+    "strict": true
+  },
+  "include": [
+    "wwwroot/js"
+  ],
+  "exclude": []
+}
