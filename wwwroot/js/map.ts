@@ -1,4 +1,4 @@
-﻿/// <reference path="typings/openlayers.d.ts" />
+﻿/// <reference path="Typings/openlayers.d.ts" />
 declare var proj4: any;
 
 //ol.proj.setProj4(proj4);
@@ -14,7 +14,7 @@ const map = {
     settings: {
         layers: [] as { name: string, layer: ol.layer.Vector | ol.layer.Tile }[],
         Projections: [] as { name: string, Projection: ol.proj.Projection }[],
-        map: <ol.Map>null,
+        map: null as any as ol.Map,
         MapProjection: null
     },
     WMS: {
@@ -90,6 +90,7 @@ const map = {
                 return <any>map.settings.layers[i].layer;
             }
         }
+        throw new Error("No Layer with that name");
     },
     AddProjection: function (name: string, Projection: ol.proj.Projection) {
         map.settings.Projections.push({

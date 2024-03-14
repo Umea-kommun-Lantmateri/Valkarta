@@ -1,3 +1,4 @@
+"use strict";
 var network = {
     AJAX: function (ops) {
         var httpRequest = null;

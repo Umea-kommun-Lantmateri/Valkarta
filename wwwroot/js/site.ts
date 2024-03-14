@@ -15,7 +15,6 @@ class app {
 
     private FilterButton: HTMLButtonElement = null as any;
     private Filtering: boolean = false;
-    private Styles: {};
     private Selection: ol.interaction.Select = null as any;
     private SelectionCollection: ol.Collection<ol.Feature> = null as any;
     private Results: Adress[] = [];

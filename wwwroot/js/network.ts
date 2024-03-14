@@ -17,7 +17,7 @@ interface AJAXops {
 
 var network = {
     AJAX: function (ops: AJAXops) {
-        var httpRequest: XMLHttpRequest = null;
+        var httpRequest: XMLHttpRequest = null as any;
         if ((<any>window).XMLHttpRequest) { // Mozilla, Safari, IE7+ ...
             httpRequest = new XMLHttpRequest();
         } else if ((<any>window).ActiveXObject) { // IE 6 and older
