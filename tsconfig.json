@@ -4,7 +4,7 @@
     "noImplicitAny": false,
     "noEmitOnError": true,
     "sourceMap": true,
-    "target": "ES3",
+    "target": "ES2015",
     "removeComments": true,
     "strict": true
   },
