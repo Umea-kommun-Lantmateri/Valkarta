@@ -13,15 +13,15 @@ interface Adress {
 
 class app {
 
-    private FilterButton: HTMLButtonElement = null;
+    private FilterButton: HTMLButtonElement = null as any;
     private Filtering: boolean = false;
     private Styles: {};
-    private Selection: ol.interaction.Select = null;
-    private SelectionCollection: ol.Collection<ol.Feature> = null;
+    private Selection: ol.interaction.Select = null as any;
+    private SelectionCollection: ol.Collection<ol.Feature> = null as any;
     private Results: Adress[] = [];
-    private DinAdressOverlay: ol.Overlay;
-    private DinVallokalOverlay: ol.Overlay;
-    private BaseUrl: string;
+    private DinAdressOverlay: ol.Overlay = null as any;
+    private DinVallokalOverlay: ol.Overlay = null as any;
+    private BaseUrl: string = "";
 
     public ShowAreas: boolean = false; //Show valdistrikt Areas
 
@@ -117,7 +117,7 @@ class app {
                     this.FilterButton.classList.remove("on");
                     this.Filtering = false;
                     this.OnlyShow("");
-                    this.FilterButton = null;
+                    this.FilterButton = null as any;
 
                     document.getElementById("FilterShowAll")?.classList.remove("show");
                 } else {
@@ -161,7 +161,7 @@ class app {
             this.FilterButton.classList.remove("on");
             this.Filtering = false;
             this.OnlyShow("");
-            this.FilterButton = null;
+            this.FilterButton = null as any;
             document.getElementById("FilterShowAll")?.classList.remove("show");
         });
     }
@@ -182,7 +182,7 @@ class app {
         this.Selection = new ol.interaction.Select({
             condition: ol.events.condition.click,
             layers: [map.GetLayer("punkter")],
-            style: (feature: ol.Feature, resolution: number) => {
+            style: (feature: ol.Feature, _resolution: number) => {
 
                 if (feature.get("Selected") === "true") {
                     return [new ol.style.Style({
@@ -225,7 +225,7 @@ class app {
 
                 })];
 
-            }
+            } 
         });
 
         map.addInteraction(this.Selection);
@@ -255,7 +255,7 @@ class app {
         });
 
         document.getElementById("FindSearch")?.addEventListener("input", () => {
-            this.Search(document.querySelector<HTMLInputElement>("#FindSearch").value, "SearchResults");
+            this.Search(document.querySelector<HTMLInputElement>("#FindSearch")!.value, "SearchResults");
         });
 
         document.getElementById("FindSearch")?.addEventListener("keyup", function (e) {
@@ -273,7 +273,7 @@ class app {
         });
 
         document.getElementById("FindSearch2")?.addEventListener("input", () => {
-            this.Search(document.querySelector<HTMLInputElement>("#FindSearch2").value, "SearchResults2");
+            this.Search(document.querySelector<HTMLInputElement>("#FindSearch2")!.value, "SearchResults2");
         });
 
     }
@@ -443,26 +443,20 @@ class app {
 
                 const dat = new Date(item.split("_")[1].substr(0, 4) + "-" + item.split("_")[1].substr(4, 2) + "-" + item.split("_")[1].substr(6, 2));
 
-                if (dat.getTime() > new Date().getTime()) {
+                if (dat.getTime() >= new Date(new Date().getFullYear() + "-" + new Date().getMonth() + "-" + new Date().getDate()).getTime()) {
                     if (f.get("Valdag") === "Ja" && f.getProperties()[item] === "Stängt") {
 
                     } else {
                         datum.innerText = dagar[dat.getDay()] + " " + dat.getDate() + " " + monader[dat.getMonth()];
                         d.appendChild(datum);
 
-
-
                         const oppet = document.createElement("p");
                         oppet.innerText = f.getProperties()[item];
-
 
                         d.appendChild(oppet);
                         OpenDays = true;
 
                     }
-
-
-
                 }
             }
         }

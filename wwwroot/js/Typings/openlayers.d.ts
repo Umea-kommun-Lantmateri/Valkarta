@@ -13343,7 +13343,7 @@ declare module olx {
             addCondition?: ol.EventsConditionType;
             condition?: ol.EventsConditionType;
             layers?: (ol.layer.Layer[] | ((layer: ol.layer.Layer) => boolean));
-            style?: (ol.style.Style | ol.style.Style[] | ol.StyleFunction);
+            style?: (ol.style.Style | ol.style.Style[] | ol.StyleFunction | ((feature: ol.Feature, resolution: number) => (ol.style.Style[] | ol.style.Style)));
             removeCondition?: ol.EventsConditionType;
             toggleCondition?: ol.EventsConditionType;
             multi?: boolean;
