@@ -91,17 +91,18 @@ I mappen [wwwroot/data/](/wwwroot/data/) ska det finns 2 GeoJSON filer `valdistr
 				"Länk" : "umea.se/val2022",
 				"Valdag" : "Ja",
 				"Förtidsröstning" : "Nej",
+				"LocationDescription": "Hall 1"
 				"Datum_20220824" : "Stängt",
 				"Datum_20220825" : "Stängt",
 				"Datum_20220826" : "Stängt",
 				"Datum_20220827" : "Stängt",
 				"Datum_20220828" : "Stängt",
-				"Datum_20220829" : "Stängt",
+				"Datum_20220829" : "08.00-21.00",
 				"Datum_20220830" : "Stängt",
 				"Datum_20220831" : "Stängt",
 				"Datum_20220901" : "Stängt",
 				"Datum_20220902" : "Stängt",
-				"Datum_20220903" : "Stängt",
+				"Datum_20220903" : "08.00-14:00",
 				"Datum_20220904" : "Stängt",
 				"Datum_20220905" : "Stängt",
 				"Datum_20220906" : "Stängt",
@@ -152,7 +153,9 @@ När man trycker på en förtidsröstningslokal så finns en länk som det finns
 Du måste ändra i [wwwroot/js/site.ts](/wwwroot/js/site.ts) i början av classen app finns:
 ```javascript
 public Settings = {
-    BaseValLink: { url: "http://www.umea.se/val2022", title: "www.umea.se/val2022"}
+    BaseValLink: { url: "http://www.umea.se/val", title: "www.umea.se/val" },
+    Valdag: new Date("2024-06-09"), //Sett the election day date
+    ValdagsOppetTider: "08.00-21.00" //opening hours for election day
 };
 ```
 
