@@ -12,12 +12,22 @@ class app {
         this.DinVallokalOverlay = null;
         this.BaseUrl = "";
         this.ShowAreas = false;
+        this.ShowValdag = false;
+        this.Version = "1.0.0";
         this.Settings = {
-            BaseValLink: { url: "http://www.umea.se/val2022", title: "www.umea.se/val2022" }
+            BaseValLink: { url: "http://www.umea.se/val", title: "www.umea.se/val" },
+            Valdag: new Date("2024-06-09"),
+            ValdagsOppetTider: "08.00-21.00"
         };
+        this.CurrentDate = new Date(new Date().getFullYear() + "-" + new Date().getMonth() + "-" + new Date().getDate());
     }
     init() {
         console.log("init");
+        let year = new Date().getFullYear();
+        let month = this.FormatNummer(new Date().getMonth() + 1);
+        let day = this.FormatNummer(new Date().getDate());
+        let dateString = year + "-" + month + "-" + day;
+        this.CurrentDate = new Date(dateString);
         if (location.host.indexOf("localhost") > -1) {
             this.BaseUrl = "/";
         }
@@ -26,18 +36,18 @@ class app {
         }
         window.location.hash = "";
         window.onpopstate = this.navigate;
+        this.Version = document.querySelector("#SiteJS").getAttribute("src").split("?")[1].split("=")[1];
         this.CreateMap();
         this.HideMarker();
         this.initEvents();
     }
     navigate(e) {
         var _a, _b;
-        console.log(e.state);
         if (!e.state) {
             a.OpenInfoScreen();
         }
         else {
-            var to = e.state.to;
+            let to = e.state.to;
             if (to === "karta") {
                 a.CloseInfoScreen();
                 (_a = document.getElementById("Find")) === null || _a === void 0 ? void 0 : _a.classList.remove("show");
@@ -56,8 +66,8 @@ class app {
             ZoomRange: 20,
             Resolutions: [3532.8773948498006, 1766.4386974249003, 883.2193487124501, 441.60967435622507, 220.80483717811254, 110.40241858905627, 55.201209294528134, 27.600604647264067, 13.800302323632033, 6.900151161816017, 3.4500755809080084, 1.7250377904540042, 0.8625188952270021, 0.431259447613501, 0.2156297238067505, 0.1078148619033753, 0.0539074309516876, 0.0269537154758438, 0.0134768577379219, 0.006738428868961, 0.0033692144344805]
         }));
-        this.AddGeoJson("data/vallokaler.json", "punkter");
-        this.AddGeoJson("data/valdistrikt.json", "valdistrikt");
+        this.AddGeoJson("data/vallokaler.json?v=" + this.Version, "punkter");
+        this.AddGeoJson("data/valdistrikt.json?v=" + this.Version, "valdistrikt");
         map.AddLayer("Adress", new ol.layer.Vector({
             source: new ol.source.Vector(),
             style: a.StyleFunction
@@ -125,8 +135,8 @@ class app {
     initEvents() {
         var _a, _b, _c, _d, _e;
         const CloseInfroScreen = document.querySelectorAll(".CloseInfroScreen");
-        for (let i = 0; i < CloseInfroScreen.length; i++) {
-            CloseInfroScreen[i].addEventListener("click", () => {
+        for (const element of CloseInfroScreen) {
+            element.addEventListener("click", () => {
                 this.AddNavState("karta");
                 this.CloseInfoScreen();
             });
@@ -313,44 +323,59 @@ class app {
     }
     ShowMarker(f) {
         var _a, _b;
-        console.log(f);
-        const d = document.createDocumentFragment();
+        const body = document.createDocumentFragment();
         const close = document.createElement("button");
         close.innerText = "X";
         close.classList.add("CloseMarker");
         close.addEventListener("click", () => {
             this.HideMarker();
         });
-        d.appendChild(close);
+        body.appendChild(close);
+        let LocationDescription = f.get("LocationDescription");
+        if (LocationDescription === null || LocationDescription === undefined) {
+            LocationDescription = "";
+        }
+        else {
+            LocationDescription = "\n" + LocationDescription;
+        }
         const header = document.createElement("h3");
-        header.innerText = (f.get("Vallokalnamn"));
-        d.appendChild(header);
+        header.innerText = (f.get("Vallokalnamn") + LocationDescription);
+        body.appendChild(header);
         const adress = document.createElement("h4");
         adress.innerText = f.get("Adress");
-        d.appendChild(adress);
+        body.appendChild(adress);
         const genericInfo = document.createElement("h4");
         genericInfo.innerHTML = "<h3><u>När du ska rösta: </u></h3><br><p>Ta med id-handling och ditt röstkort.<br>På röstkortet finns mer information.</p>";
-        d.appendChild(genericInfo);
+        body.appendChild(genericInfo);
         const link = document.createElement("a");
         link.innerHTML = "<a href='" + this.Settings.BaseValLink.url + "' target='_blank'>" + this.Settings.BaseValLink.title + "</a>  ";
-        d.appendChild(link);
+        body.appendChild(link);
         const oppettider = document.createElement("h4");
         oppettider.innerText = "Öppettider för lokalen finns nedan";
-        d.appendChild(oppettider);
+        body.appendChild(oppettider);
         let OpenDays = false;
         for (const item in f.getProperties()) {
             if (item.split("_")[0] === "Datum") {
                 const datum = document.createElement("h3");
                 const dat = new Date(item.split("_")[1].substr(0, 4) + "-" + item.split("_")[1].substr(4, 2) + "-" + item.split("_")[1].substr(6, 2));
-                if (dat.getTime() >= new Date(new Date().getFullYear() + "-" + new Date().getMonth() + "-" + new Date().getDate()).getTime()) {
+                if (dat.getTime() >= this.CurrentDate.getTime()) {
                     if (f.get("Valdag") === "Ja" && f.getProperties()[item] === "Stängt") {
                     }
                     else {
                         datum.innerText = dagar[dat.getDay()] + " " + dat.getDate() + " " + monader[dat.getMonth()];
-                        d.appendChild(datum);
                         const oppet = document.createElement("p");
                         oppet.innerText = f.getProperties()[item];
-                        d.appendChild(oppet);
+                        let ShowDate = true;
+                        if (dat.getMonth() + "-" + dat.getDate() == this.Settings.Valdag.getMonth() + "-" + this.Settings.Valdag.getDate() && this.ShowValdag) {
+                            oppet.innerText = this.Settings.ValdagsOppetTider;
+                        }
+                        else if (this.ShowValdag) {
+                            ShowDate = false;
+                        }
+                        if (ShowDate) {
+                            body.appendChild(datum);
+                            body.appendChild(oppet);
+                        }
                         OpenDays = true;
                     }
                 }
@@ -359,11 +384,12 @@ class app {
         if (OpenDays === false) {
             const p = document.createElement("p");
             p.innerText = "Det finns inga öppna dagar för den här lokalen.";
-            d.appendChild(p);
+            body.appendChild(p);
         }
         document.getElementById("Markerinfo").innerHTML = "";
-        (_a = document.getElementById("Markerinfo")) === null || _a === void 0 ? void 0 : _a.appendChild(d);
+        (_a = document.getElementById("Markerinfo")) === null || _a === void 0 ? void 0 : _a.appendChild(body);
         (_b = document.querySelector("#Markerinfo")) === null || _b === void 0 ? void 0 : _b.classList.add("show");
+        this.ShowValdag = false;
     }
     HideMarker() {
         var _a;
@@ -441,6 +467,7 @@ class app {
     }
     GoToAdress(id) {
         var _a, _b;
+        this.SelectionCollection.clear();
         const item = this.Results[id];
         const valdistrikt = map.GetLayer("valdistrikt").getSource().getFeatures();
         const vallokaler = map.GetLayer("punkter").getSource().getFeatures();
@@ -479,6 +506,7 @@ class app {
                             console.log("vallokalersnamn: '" + namn + "' valdistrikt namn: '" + valdistrikt_name + "', OK: ", namn === valdistrikt_name);
                         }
                         if (namn === valdistrikt_name) {
+                            this.ShowValdag = true;
                             this.SelectionCollection.push(vallokaler[j]);
                             vallokaler[j].set("Selected", "true");
                             const ext = ol.extent.boundingExtent([vallokaler[j].getGeometry().getCoordinates(), coords]);
@@ -548,6 +576,12 @@ class app {
         for (let i = 0; i < valdistrikt.length; i++) {
             console.log(valdistrikt[i].get("VD_NAMN"));
         }
+    }
+    FormatNummer(num) {
+        if (num < 10) {
+            return "0" + num;
+        }
+        return num.toString();
     }
 }
 const a = new app();

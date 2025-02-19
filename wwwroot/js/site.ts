@@ -24,12 +24,29 @@ class app {
 
     public ShowAreas: boolean = false; //Show valdistrikt Areas
 
+    public ShowValdag = false;
+
+    public Version = "1.0.0";
+    /**
+     * Settings for the site like base url, valdag, valdagsoppettider
+     */
     public Settings = {
-        BaseValLink: { url: "http://www.umea.se/val2022", title: "www.umea.se/val2022" }
+        BaseValLink: { url: "http://www.umea.se/val", title: "www.umea.se/val" },
+        Valdag: new Date("2024-06-09"), //Sett the election day date
+        ValdagsOppetTider: "08.00-21.00" //opening hours for election day
     };
+
+    public CurrentDate: Date = new Date(new Date().getFullYear() + "-" + new Date().getMonth() + "-" + new Date().getDate());
 
     init() {
         console.log("init");
+
+        let year = new Date().getFullYear();
+        let month = this.FormatNummer(new Date().getMonth() + 1);
+        let day = this.FormatNummer(new Date().getDate());
+
+        let dateString = year + "-" + month + "-" + day;
+        this.CurrentDate = new Date(dateString);
 
         if (location.host.indexOf("localhost") > -1) {
             this.BaseUrl = "/";
@@ -41,7 +58,7 @@ class app {
 
         window.onpopstate = this.navigate;
 
-
+        this.Version = document.querySelector("#SiteJS")!.getAttribute("src")!.split("?")[1].split("=")[1];
 
         this.CreateMap();
         this.HideMarker();
@@ -50,12 +67,10 @@ class app {
 
     navigate(e: PopStateEvent) {
 
-        console.log(e.state);
-
         if (!e.state) {
             a.OpenInfoScreen();
         } else {
-            var to = (e.state as { to: string }).to;
+            let to = (e.state as { to: string }).to;
 
             if (to === "karta") {
                 a.CloseInfoScreen();
@@ -68,6 +83,9 @@ class app {
 
     }
 
+    /**
+     * Create the map
+     */
     CreateMap() {
         //Base Map
         map.AddLayer("WMS", map.WMS.getWMS({
@@ -78,8 +96,8 @@ class app {
         }));
 
         //GeoJSON Layers
-        this.AddGeoJson("data/vallokaler.json", "punkter");
-        this.AddGeoJson("data/valdistrikt.json", "valdistrikt");
+        this.AddGeoJson("data/vallokaler.json?v=" + this.Version, "punkter");
+        this.AddGeoJson("data/valdistrikt.json?v=" + this.Version, "valdistrikt");
 
         //Searched address point layer
         map.AddLayer("Adress", new ol.layer.Vector({
@@ -99,6 +117,9 @@ class app {
         document.getElementById("ZoomMinus")?.addEventListener("click", () => { map.ZoonOut(); });
     }
 
+    /**
+     * Init the filter buttons
+     */
     initFilter() {
         const items = document.querySelectorAll("#Filter .item");
         for (let i = 0; i < items.length; i++) {
@@ -169,8 +190,8 @@ class app {
 
         const CloseInfroScreen = document.querySelectorAll(".CloseInfroScreen");
 
-        for (let i = 0; i < CloseInfroScreen.length; i++) {
-            CloseInfroScreen[i].addEventListener("click", () => {
+        for (const element of CloseInfroScreen) {
+            element.addEventListener("click", () => {
                 this.AddNavState("karta");
                 this.CloseInfoScreen();
             });
@@ -224,7 +245,7 @@ class app {
 
                 })];
 
-            } 
+            }
         });
 
         map.addInteraction(this.Selection);
@@ -338,11 +359,8 @@ class app {
                         })];
                     }
                 }
-
             }
         }
-
-
 
         if (a.ShowAreas) {
             return new ol.style.Style({
@@ -364,12 +382,8 @@ class app {
             })
         }
 
-
         return [new ol.style.Style()];
     }
-
-
-
 
     AddGeoJson(url: string, name: string) {
         map.AddLayer(name, new ol.layer.Vector({
@@ -402,9 +416,12 @@ class app {
         document.getElementById("InfroScreen")?.classList.add("open");
     }
 
+    /**
+     * Show vallokal info
+     * @param f
+     */
     ShowMarker(f: ol.Feature) {
-        console.log(f);
-        const d = document.createDocumentFragment();
+        const body = document.createDocumentFragment();
 
         const close = document.createElement("button");
         close.innerText = "X";
@@ -412,27 +429,34 @@ class app {
         close.addEventListener("click", () => {
             this.HideMarker();
         });
-        d.appendChild(close);
+        body.appendChild(close);
+
+        let LocationDescription = f.get("LocationDescription") as string;
+        if (LocationDescription === null || LocationDescription === undefined) {
+            LocationDescription = "";
+        } else {
+            LocationDescription = "\n" + LocationDescription;
+        }
 
         const header = document.createElement("h3");
-        header.innerText = (f.get("Vallokalnamn"));
-        d.appendChild(header);
+        header.innerText = (f.get("Vallokalnamn") + LocationDescription);
+        body.appendChild(header);
 
         const adress = document.createElement("h4");
         adress.innerText = f.get("Adress");
-        d.appendChild(adress);
+        body.appendChild(adress);
 
         const genericInfo = document.createElement("h4");
         genericInfo.innerHTML = "<h3><u>När du ska rösta: </u></h3><br><p>Ta med id-handling och ditt röstkort.<br>På röstkortet finns mer information.</p>";
-        d.appendChild(genericInfo);
+        body.appendChild(genericInfo);
 
         const link = document.createElement("a");
         link.innerHTML = "<a href='" + this.Settings.BaseValLink.url + "' target='_blank'>" + this.Settings.BaseValLink.title + "</a>  ";
-        d.appendChild(link);
+        body.appendChild(link);
 
         const oppettider = document.createElement("h4");
         oppettider.innerText = "Öppettider för lokalen finns nedan"
-        d.appendChild(oppettider);
+        body.appendChild(oppettider);
 
         let OpenDays = false;
 
@@ -442,17 +466,28 @@ class app {
 
                 const dat = new Date(item.split("_")[1].substr(0, 4) + "-" + item.split("_")[1].substr(4, 2) + "-" + item.split("_")[1].substr(6, 2));
 
-                if (dat.getTime() >= new Date(new Date().getFullYear() + "-" + new Date().getMonth() + "-" + new Date().getDate()).getTime()) {
+                if (dat.getTime() >= this.CurrentDate.getTime()) {
                     if (f.get("Valdag") === "Ja" && f.getProperties()[item] === "Stängt") {
 
                     } else {
                         datum.innerText = dagar[dat.getDay()] + " " + dat.getDate() + " " + monader[dat.getMonth()];
-                        d.appendChild(datum);
 
                         const oppet = document.createElement("p");
                         oppet.innerText = f.getProperties()[item];
 
-                        d.appendChild(oppet);
+                        let ShowDate = true;
+
+                        if (dat.getMonth() + "-" + dat.getDate() == this.Settings.Valdag.getMonth() + "-" + this.Settings.Valdag.getDate() && this.ShowValdag) {
+                            oppet.innerText = this.Settings.ValdagsOppetTider;
+                        } else if (this.ShowValdag) {
+                            ShowDate = false;
+                        }
+
+                        if (ShowDate) {
+                            body.appendChild(datum);
+                            body.appendChild(oppet);
+                        }
+
                         OpenDays = true;
 
                     }
@@ -464,12 +499,14 @@ class app {
         if (OpenDays === false) {
             const p = document.createElement("p");
             p.innerText = "Det finns inga öppna dagar för den här lokalen."
-            d.appendChild(p);
+            body.appendChild(p);
         }
 
         (document.getElementById("Markerinfo") as HTMLDivElement).innerHTML = "";
-        document.getElementById("Markerinfo")?.appendChild(d);
+        document.getElementById("Markerinfo")?.appendChild(body);
         document.querySelector("#Markerinfo")?.classList.add("show");
+
+        this.ShowValdag = false;
     }
 
     HideMarker() {
@@ -499,7 +536,11 @@ class app {
         return string.charAt(0).toUpperCase() + string.slice(1);
     }
 
-
+    /**
+     * Search for an address
+     * @param query
+     * @param SearchResults
+     */
     Search(query: string, SearchResults: string) {
         network.GET(this.BaseUrl + "api/Search/HomeAddress?query=" + query, (data: Adress[]) => {
             this.Results = data;
@@ -578,7 +619,14 @@ class app {
         }, (err) => { })
     }
 
+    /**
+     * Go to the address in the search results
+     * @param id
+     */
     GoToAdress(id: number) {
+
+        this.SelectionCollection.clear();
+
         const item = this.Results[id];
 
         const valdistrikt = (map.GetLayer("valdistrikt") as ol.layer.Vector).getSource().getFeatures();
@@ -614,6 +662,8 @@ class app {
 
         map.GetMap().addOverlay(this.DinAdressOverlay);
 
+        //console.log(coords);
+
         for (let i = 0; i < valdistrikt.length; i++) {
             if (valdistrikt[i].getGeometry().intersectsCoordinate(coords)) {
                 const valdistrikt_name = (valdistrikt[i].getProperties()["VD_NAMN"] as string).trim();
@@ -636,11 +686,16 @@ class app {
                         }
 
                         if (namn === valdistrikt_name) {
+                            this.ShowValdag = true;
+
                             this.SelectionCollection.push(vallokaler[j]);
 
                             vallokaler[j].set("Selected", "true");
 
                             const ext = ol.extent.boundingExtent([(vallokaler[j].getGeometry() as ol.geom.Point).getCoordinates(), coords])
+
+                            //console.log("vallokal:", (vallokaler[j].getGeometry() as ol.geom.Point).getCoordinates());
+                            //console.log("ext:", ext);
 
                             var paddingleft = 300;
 
@@ -689,6 +744,9 @@ class app {
 
     }
 
+    /**
+     * Testa så att alla valdistrikt har en vallokal
+     */
     Test_vallokaler() {
 
         const valdistrikt = (map.GetLayer("valdistrikt") as ol.layer.Vector).getSource().getFeatures();
@@ -738,6 +796,13 @@ class app {
         for (let i = 0; i < valdistrikt.length; i++) {
             console.log(valdistrikt[i].get("VD_NAMN"));
         }
+    }
+
+    FormatNummer(num: number): string {
+        if (num < 10) {
+            return "0" + num;
+        }
+        return num.toString();
     }
 
 }
